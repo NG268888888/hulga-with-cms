@@ -1,3 +1,4 @@
+timezone = "Asia/Shanghai"
 seURL = "https://example.com"
 languageCode = "zh-cn"
 DefaultContentLanguage = "zh-cn"
