@@ -10,7 +10,7 @@ Type: CNAME
 Name: @（表示你的根域名，一级域名）
 Target: Netlify提供的二级域名（比如 example.netlify.app）
 在Cloudflare设置ssl为 full
-
+![](/images/截屏2024-09-12-16.06.35.png)
 
 ## 2. 确保Netlify的域名配置正确
 
