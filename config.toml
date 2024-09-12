@@ -1,5 +1,5 @@
 timezone = "Asia/Shanghai"
-seURL = "https://example.com"
+seURL = "https://incredible-genie-dc1dbb.netlify.app/"
 languageCode = "zh-cn"
 DefaultContentLanguage = "zh-cn"
 title = "My New Hugo Site"
