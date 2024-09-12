@@ -27,9 +27,6 @@ theme = "hulga"
   # copyright text on footer
   copyright = "Copyright © 2020 wlh. All rights reserved."
 
-  # enable katex rendering on every post page, default false
-  math = false
-
   # enable showing content summary below post title in home page, default false
   showSummary = true
 
