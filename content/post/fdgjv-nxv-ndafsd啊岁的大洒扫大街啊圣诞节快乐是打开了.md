@@ -6,4 +6,4 @@ date: 2024-09-11T16:45:00+08:00
 各方面vkxklxcvkjl
 123123123123<blob:https://incredible-genie-dc1dbb.netlify.app/0d4709a8-8fcb-45ba-8a1c-b3c8f56d746c>
 
-![](static/images/1886ul-92.png)
+![](images/1886ul-92.png)
