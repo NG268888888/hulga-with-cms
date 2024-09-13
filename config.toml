@@ -28,7 +28,7 @@ theme = "hulga"
   copyright = "Copyright © 2020 wlh. All rights reserved."
 
   # enable showing content summary below post title in home page, default false
-  showSummary = true
+  showSummary = false 
 
   # set paginate on taxonomy term page (tags or categories), default 10
   termPaginate = 3
