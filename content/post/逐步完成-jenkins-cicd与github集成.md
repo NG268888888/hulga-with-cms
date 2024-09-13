@@ -18,3 +18,5 @@ Source Code Managment - Git - Reponstory URL 填写刚才一样的git仓库地�
 选择要持续集成的Github仓库的分支，一半都是main或者master
 最后点击Build Now，看看是否成功
 如果有问题，在Console Output中查看日志解决
+
+参考：https://medium.com/@mudasirhaji/complete-step-by-step-jenkins-cicd-with-github-integration-aae3961b6e33
