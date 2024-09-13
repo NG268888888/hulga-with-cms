@@ -2,13 +2,17 @@
 <html lang="zh-cn"><head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script><script>const t=localStorage.getItem('bulma-theme'); if (t !== null) { document.documentElement.setAttribute('data-theme', t);} </script><meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="msapplication-TileColor" content="#1d9bf0">
-  <meta name="theme-color" content="#1d9bf0"><title>Posts | My New Hugo Site</title>
-  <meta property="og:title" content="Posts - My New Hugo Site">
+  <meta name="theme-color" content="#1d9bf0"><title>Cloudflare加速访问hugo部署在netlify的博客，“Site Not Found” | My New Hugo Site</title>
+  <meta property="og:title" content="Cloudflare加速访问hugo部署在netlify的博客，“Site Not Found” - My New Hugo Site">
   <meta property="og:type" content="article">
   
+  <meta property="article:published_time" content="2024-09-12T15:57:00&#43;08:00">
+  
+  
+  <meta property="article:modified_time" content="2024-09-12T15:57:00&#43;08:00">
   
   <meta name="keywords" content="HTML, hugo, CSS">
-  <meta name="description" content="Posts"><meta name="author" content="xxx">
+  <meta name="description" content="Cloudflare加速访问hugo部署在netlify的博客，“Site Not Found”"><meta name="author" content="xxx">
   <link rel="icon" href="/favicon.ico" sizes="32x32">
   <link rel="icon" href="/icon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="/apple-touch-icon.png">
@@ -21,7 +25,7 @@
   <div class="hero-head">
     <nav class="navbar is-primary" role="navigation" aria-label="dropdown navigation">
   <div class="container">
-    <div class="navbar-brand"><a class="navbar-item is-invisible" href="/">
+    <div class="navbar-brand"><a class="navbar-item " href="/">
         My New Hugo Site
       </a>
       <a role="button" class="navbar-burger" data-target="navMenu" aria-label="menu" aria-expanded="false">
@@ -76,56 +80,48 @@
 
   </div>
   <div class="hero-body">
-    <div class="container has-text-centered">
-      <h1 class="title">
-        My New Hugo Site
+    <header class="container has-text-centered" data-pagefind-body>
+      <h1 class="title post-title is-spaced">
+        Cloudflare加速访问hugo部署在netlify的博客，“Site Not Found”
       </h1>
+      <h2 class="subtitle"><time>2024/09/12</time></h2>
       
-      <h2 class="subtitle">
-        This is a subtitle
-      </h2>
-      
-    </div>
+    </header>
   </div>
 </section>
-<section class="section post-box-section">
+<section class="section">
   <div class="container">
     <div class="columns">
-      <div class="column is-10 is-offset-1">
-        <div class="columns">
-          <div class="column is-8">
-            <div class="post-lists">
-              
-              
-              <div class="box post-box">
-                <div class="mb-2">
-                    <a href="/post/cloudflare%E5%8A%A0%E9%80%9F%E8%AE%BF%E9%97%AEhugo%E9%83%A8%E7%BD%B2%E5%9C%A8netlify%E7%9A%84%E5%8D%9A%E5%AE%A2site-not-found/" class="title is-5">Cloudflare加速访问hugo部署在netlify的博客，“Site Not Found”</a>
-                </div>
-                
-                
-                <div class="post-box-meta">
-                  <div class="post-box-time">
-                    2024/09/12
-                    
-                  </div>
-                  
-                </div>
-              </div>
-              
-            </div>
-            <div class="pt-5">
-              
-
-
-            </div>
-          </div>
-          <div class="column is-4 is-hidden-mobile">
-            
-
+      
+      <div class="column is-7 is-offset-2">
+      
+        <article class="content" id="post-content" data-pagefind-body><h2 id="1-检查cloudflare的dns设置">1. 检查Cloudflare的DNS设置</h2>
+<p>在Cloudflare的DNS设置中，确保你已经正确配置了指向Netlify二级域名的CNAME记录。
+你的CNAME记录应该如下：
+Type: CNAME
+Name: @（表示你的根域名，一级域名）
+Target: Netlify提供的二级域名（比如 example.netlify.app）
+在Cloudflare设置ssl为 full
+<img src="/images/%E6%88%AA%E5%B1%8F2024-09-12-16.06.35.png" alt=""></p>
+<h2 id="2-确保netlify的域名配置正确">2. 确保Netlify的域名配置正确</h2>
+<p>登录Netlify，进入你的网站设置页面。
+在“Domain settings”中，确保你的一级域名已经正确添加到Netlify，并且Netlify已经完成了域名验证。
+如果你的域名在Netlify中没有正确配置，Netlify将无法正确解析请求，因此会出现“Site Not Found”的错误。</p>
+<h2 id="3-等待dns解析生效">3. 等待DNS解析生效</h2>
+<p>DNS修改后可能需要一些时间才能生效，通常为几分钟到几小时。如果刚刚做了修改，稍等一段时间再尝试访问。</p>
+<h2 id="4-确保netlify站点已成功部署">4. 确保Netlify站点已成功部署</h2>
+<p>确保你的博客已经成功部署在Netlify，并且可以通过Netlify的二级域名直接访问。如果二级域名访问时也出现“Site Not Found”，那说明问题出在Netlify的部署上，而不是域名配置。</p>
+</article>
+      </div>
+      
+      <div class="column is-hidden-mobile">
+        <div class="sidebar pl-4" id="toc">
+          <div class="post post-toc" id="post-toc">
             
           </div>
         </div>
       </div>
+      
     </div>
   </div>
 </section>
@@ -147,6 +143,40 @@
 <script src="https://cdn.jsdelivr.net/npm/vanilla-back-to-top@7.2.1/dist/vanilla-back-to-top.min.js"></script>
 
 <script src="//localhost:1313/js/hulga.min.js" defer></script>
+
+  
+<link id="hlcss" rel="stylesheet" href="//localhost:1313/css/monokai.min.css" type="text/css">
+<script src="https://cdn.jsdelivr.net/npm/anchor-js@5.0.0/anchor.min.js"></script><script>
+  anchors.options = {
+    placement: 'left',
+    
+    icon: '#'
+  };
+  anchors.add('.content h1, .content h2, .content h3');
+</script>
+
+
+  
+
+
+<link rel="stylesheet" type="text/css" href="//localhost:1313/css/toc.min.css"><script src="https://cdn.jsdelivr.net/npm/tocbot@4.25.0/dist/tocbot.min.js"></script>
+<script>
+    tocbot.init({
+        
+        tocSelector: '.post-toc',
+        
+        contentSelector: '#post-content',
+        
+        headingSelector: 'h1, h2, h3',
+        collapseDepth:  0 ,
+        scrollSmooth: true,
+        positionFixedSelector: '.post-toc',
+        
+        
+        fixedSidebarOffset: 273,
+    });
+</script>
+
 
 </body>
 

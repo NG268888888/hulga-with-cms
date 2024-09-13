@@ -6,14 +6,14 @@
     <description>Recent content on My New Hugo Site</description>
     <generator>Hugo</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Wed, 11 Sep 2024 14:05:53 +0800</lastBuildDate>
+    <lastBuildDate>Thu, 12 Sep 2024 15:57:00 +0800</lastBuildDate>
     <atom:link href="//localhost:1313/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>My First Post</title>
-      <link>//localhost:1313/post/my-first-post/</link>
-      <pubDate>Wed, 11 Sep 2024 14:05:53 +0800</pubDate>
-      <guid>//localhost:1313/post/my-first-post/</guid>
-      <description>&lt;p&gt;This is my first post!&lt;/p&gt;</description>
+      <title>Cloudflare加速访问hugo部署在netlify的博客，“Site Not Found”</title>
+      <link>//localhost:1313/post/cloudflare%E5%8A%A0%E9%80%9F%E8%AE%BF%E9%97%AEhugo%E9%83%A8%E7%BD%B2%E5%9C%A8netlify%E7%9A%84%E5%8D%9A%E5%AE%A2site-not-found/</link>
+      <pubDate>Thu, 12 Sep 2024 15:57:00 +0800</pubDate>
+      <guid>//localhost:1313/post/cloudflare%E5%8A%A0%E9%80%9F%E8%AE%BF%E9%97%AEhugo%E9%83%A8%E7%BD%B2%E5%9C%A8netlify%E7%9A%84%E5%8D%9A%E5%AE%A2site-not-found/</guid>
+      <description>&lt;h2 id=&#34;1-检查cloudflare的dns设置&#34;&gt;1. 检查Cloudflare的DNS设置&lt;/h2&gt;&#xA;&lt;p&gt;在Cloudflare的DNS设置中，确保你已经正确配置了指向Netlify二级域名的CNAME记录。&#xA;你的CNAME记录应该如下：&#xA;Type: CNAME&#xA;Name: @（表示你的根域名，一级域名）&#xA;Target: Netlify提供的二级域名（比如 example.netlify.app）&#xA;在Cloudflare设置ssl为 full&#xA;&lt;img src=&#34;//localhost:1313/images/%E6%88%AA%E5%B1%8F2024-09-12-16.06.35.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;&#xA;&lt;h2 id=&#34;2-确保netlify的域名配置正确&#34;&gt;2. 确保Netlify的域名配置正确&lt;/h2&gt;&#xA;&lt;p&gt;登录Netlify，进入你的网站设置页面。&#xA;在“Domain settings”中，确保你的一级域名已经正确添加到Netlify，并且Netlify已经完成了域名验证。&#xA;如果你的域名在Netlify中没有正确配置，Netlify将无法正确解析请求，因此会出现“Site Not Found”的错误。&lt;/p&gt;&#xA;&lt;h2 id=&#34;3-等待dns解析生效&#34;&gt;3. 等待DNS解析生效&lt;/h2&gt;&#xA;&lt;p&gt;DNS修改后可能需要一些时间才能生效，通常为几分钟到几小时。如果刚刚做了修改，稍等一段时间再尝试访问。&lt;/p&gt;&#xA;&lt;h2 id=&#34;4-确保netlify站点已成功部署&#34;&gt;4. 确保Netlify站点已成功部署&lt;/h2&gt;&#xA;&lt;p&gt;确保你的博客已经成功部署在Netlify，并且可以通过Netlify的二级域名直接访问。如果二级域名访问时也出现“Site Not Found”，那说明问题出在Netlify的部署上，而不是域名配置。&lt;/p&gt;</description>
     </item>
   </channel>
 </rss>

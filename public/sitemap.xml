@@ -2,14 +2,14 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
-    <loc>//localhost:1313/post/my-first-post/</loc>
-    <lastmod>2024-09-11T14:05:53+08:00</lastmod>
+    <loc>//localhost:1313/post/cloudflare%E5%8A%A0%E9%80%9F%E8%AE%BF%E9%97%AEhugo%E9%83%A8%E7%BD%B2%E5%9C%A8netlify%E7%9A%84%E5%8D%9A%E5%AE%A2site-not-found/</loc>
+    <lastmod>2024-09-12T15:57:00+08:00</lastmod>
   </url><url>
     <loc>//localhost:1313/</loc>
-    <lastmod>2024-09-11T14:05:53+08:00</lastmod>
+    <lastmod>2024-09-12T15:57:00+08:00</lastmod>
   </url><url>
     <loc>//localhost:1313/post/</loc>
-    <lastmod>2024-09-11T14:05:53+08:00</lastmod>
+    <lastmod>2024-09-12T15:57:00+08:00</lastmod>
   </url><url>
     <loc>//localhost:1313/categories/</loc>
   </url><url>
