@@ -177,3 +177,5 @@ ispconfig安装之后在/etc/nginx/sites-available/apps.vhost，找到phpmyadmin
 ### 安装ispconfig提示`Failed to reload php8.1-fpm.service: Unit php8.1-fpm.service not found`
 
 安装ispconfig 3.1以上版本，如果提示`Failed to reload php8.1-fpm.service: Unit php8.1-fpm.service not found`，ubuntu 22.04默认是php8.1，ispconfig 3.X版本支持php 8.1
+
+*https://www.howtoforge.com/tutorial/perfect-server-ubuntu-18-04-nginx-bind-dovecot-and-ispconfig-3/*
