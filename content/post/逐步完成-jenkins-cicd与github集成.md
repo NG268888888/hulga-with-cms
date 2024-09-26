@@ -2,6 +2,7 @@
 title: 逐步完成 Jenkins CICD与GitHub集成
 date: 2024-09-13T10:35:00+08:00
 ---
+## 123
 部署项目的的vps安装jenkins后，每当本地推送代码到github，jenkins会自动部署最新的项目代码到vps。
 
 ### 在vps上安装jenkins
