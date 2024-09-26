@@ -37,7 +37,7 @@ Source Code Management - Git - Repository URL填git@github.com:XXX/XXX.git
 
 在vps上使用命令：ssh-keygen -t ed25519 将生成的XXX.pub内容复制到Github对应的私有仓库- Settings - Deploy keys
 
-在Jenkins中的Credentials点击add，选择jenkins，Username随意，Private Key粘贴vps刚才生成的XXX文件内容。
+在Jenkins中的Credentials点击add，选择jenkins，Username试试github项目的名字vthily（例如：git@github.com:vthily/<your-git-repo>.git），Private Key粘贴vps刚才生成的XXX文件内容。
 
 Github仓库的分支，一般都是main或者master
 
