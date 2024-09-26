@@ -29,4 +29,16 @@ Github - Settings - SSH 爱and GPG keys
 
 如果有问题，在Console Output中查看日志解决
 
+### 如果是Git私有仓库并且用ssh验证
+
+GitHub project - Project url填git@github.com:XXX/XXX.git
+
+Source Code Management - Git - Repository URL填git@github.com:XXX/XXX.git
+
+在vps上使用命令：ssh-keygen -t ed25519 将生成的XXX.pub内容复制到
+Github - Settings - SSH 爱and GPG keys
+
+
+
+
 参考：https://medium.com/@mudasirhaji/complete-step-by-step-jenkins-cicd-with-github-integration-aae3961b6e33
