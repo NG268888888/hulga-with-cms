@@ -35,10 +35,25 @@ GitHub project - Project url填git@github.com:XXX/XXX.git
 
 Source Code Management - Git - Repository URL填git@github.com:XXX/XXX.git
 
-在vps上使用命令：ssh-keygen -t ed25519 将生成的XXX.pub内容复制到
-Github - Settings - SSH 爱and GPG keys
+在vps上使用命令：ssh-keygen -t ed25519 将生成的XXX.pub内容复制到Github对应的私有仓库- Settings - Deploy keys
 
+在Jenkins中的Credentials点击add，选择jenkins，Username随意，Private Key粘贴vps刚才生成的XXX文件内容。
 
+Github仓库的分支，一般都是main或者master
 
+提示错误：
+
+> stderr: No ED25519 host key is known for github.com and you have requested strict > checking.
+> Host key verification failed.
+
+在vps上输入git ls-remote -h git@github.com:XXX/XXX.git HEAD
+
+会在~/.ssh/known_hosts把私钥存入known_hosts文件
+
+修改~/.ssh和known_hosts的权限
+
+然后就不会提示错误了（实际测试依旧报错No ED25519 host key is known）
+
+终极解决办法：go to 'Manage Jenkins' -> 'Security' -> 'Git Host Key Verification Configuration' and configure host key verification，选择不验证
 
 参考：https://medium.com/@mudasirhaji/complete-step-by-step-jenkins-cicd-with-github-integration-aae3961b6e33
