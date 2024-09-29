@@ -37,9 +37,11 @@ server {
 
 `sudo ln -s /etc/nginx/sites-available/adminer /etc/nginx/sites-enabled/`
 
+这一步很重要，在ispconfig下如果只在/etc/nginx/sites-available目录下创建配置文件，是不会被加载生效的。
+
 ### 测试配置并重新加载Nginx
 
-首先测试Nginx配置文件是否正确，如果有错，会提示具体位置
+如果配置文件有语法错误或其他问题，nginx -t 会输出错误信息，帮助你定位问题
 
 `sudo nginx -t`
 
@@ -60,4 +62,8 @@ server {
 
 > 2024/09/29 02:06:04 [error] 198783#198783: *7 open() "/var/www/apps/adminer" failed (2: No such file or directory)
 
-默认访问都是yourdomain/adminer.php，你访问的是yourdomain/adminer，如果nginx配置有错误，会有403，nginx错误日志在/var/log/nginx/error.log
+错误信息 open() "/var/www/apps/adminer" failed (2: No such file or directory) 表示 Nginx 试图访问 /var/www/apps/adminer 目录或文件，但未找到。
+
+因为你下载的 Adminer 文件名为 adminer.php，而你正在访问 /adminer，Nginx 正试图打开一个名为 adminer 的文件或目录，而不是 adminer.php。
+
+要解决此问题，有两个选择：将请求重定向到 adminer.php
