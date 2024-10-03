@@ -5,6 +5,7 @@ date: 2024-10-03T21:00:00+08:00
 1. 在ispconfig后台add new website
  - Auto-Subdomain选择www.
  - 勾选Let's Encrypt SSL
+ - PHP选择PHP-FPM
  - SEO Redirect选择www.domain.tld => domain.tld
  - 勾选Rewrite HTTP to HTTPS
  - nginx Directives填写
