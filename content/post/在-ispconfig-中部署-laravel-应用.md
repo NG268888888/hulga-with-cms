@@ -127,3 +127,10 @@ php artisan config:clear
 php artisan cache:clear
 php artisan view:clear
 ```
+
+由于后台使用了laravel-admin，访问domain.com/admin会提示您与网站连接并不完全安全，需要修改，laravel项目config - admin.php中的    'https' => env('ADMIN_HTTPS', false),改为true
+
+**https://ruben-vilar.medium.com/how-to-deploy-a-laravel-application-in-ispconfig-ffa42ba24d93**
+**https://angeloavv.medium.com/how-to-deploy-a-laravel-application-into-an-ispconfig-server-using-gitlab-pipelines-62bb0fc0285e**
+
+
