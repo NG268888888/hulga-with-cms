@@ -383,6 +383,19 @@ git add -A
 git commit -m "邮箱验证中间件"
 ```
 
+## laravel-admin后台
+提示Your requirements could not be resolved to an installable set of packages.修改comoposer.json
+```
+    "require": {
+        "encore/laravel-admin": "^1.8"
+        ...
+    }
+```
+```
+composer update
+composer require encore/laravel-admin
+```
+
 ## 在 Laravel 项目中实现多语言支持
 
 在 Laravel 项目中实现多语言支持，可以通过以下步骤来完成：
