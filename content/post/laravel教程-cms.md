@@ -394,7 +394,10 @@ git commit -m "邮箱验证中间件"
 ```
 composer update
 composer require encore/laravel-admin
+php artisan vendor:publish --provider="Encore\Admin\AdminServiceProvider"
+php artisan admin:install
 ```
+修改后台为中文语言，app.php文件locale = 'zh_CN'，然后修改resources\lang\zh-CN为zh_CN
 
 ## 在 Laravel 项目中实现多语言支持
 
