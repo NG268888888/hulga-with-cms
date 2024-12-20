@@ -24,3 +24,5 @@ date: 2024-12-20T15:31:00+08:00
 ```
 <text class="iconfont" style="font-size: 32px;">&#xe616;</text>
 ```
+
+*其他用法参考：https://uniapp.dcloud.net.cn/component/uniui/uni-icons.html*
