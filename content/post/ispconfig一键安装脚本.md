@@ -2,6 +2,7 @@
 title: ispconfig一键安装脚本
 date: 2024-12-21T14:54:00+08:00
 ---
+```
 #!/bin/bash
 
 set -e  # 遇到错误时退出脚本
@@ -148,3 +149,4 @@ service nginx restart
 service php8.1-fpm restart
 
 echo "Installation complete. Please verify all components."
+```
