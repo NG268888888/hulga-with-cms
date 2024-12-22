@@ -111,6 +111,26 @@ else
     echo "TLS support is already enabled."
 fi
 
+# 创建 SSL 证书
+SSL_DIR="/etc/ssl/private/"
+SSL_FILE="$SSL_DIR/pure-ftpd.pem"
+if [ ! -f "$SSL_FILE" ]; then
+    echo "Creating SSL certificate for PureFTPd..."
+    mkdir -p "$SSL_DIR"
+    openssl req -x509 -nodes -days 7300 -newkey rsa:2048 \
+        -keyout "$SSL_FILE" -out "$SSL_FILE" \
+        -subj "/C=DE/ST=YourState/L=YourCity/O=YourOrganization/OU=IT Department/CN=server1.example.com/emailAddress=youremail@example.com"
+    chmod 600 "$SSL_FILE"
+else
+    echo "SSL certificate for PureFTPd already exists."
+fi
+
+# 重启 PureFTPd 服务
+echo "Restarting PureFTPd service..."
+service pure-ftpd-mysql restart
+
+echo "PureFTPd and TLS configuration completed."
+
 # 重启 PureFTPd 服务
 echo "Restarting PureFTPd service..."
 service pure-ftpd-mysql restart
