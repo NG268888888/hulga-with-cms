@@ -2,7 +2,20 @@
 title: ispconfig一键安装脚本
 date: 2024-12-21T14:54:00+08:00
 ---
+# 配置环境
+
+sudo vi /etc/hosts
+
 ```
+ip   server1.example.com     server1
+
+```
+sudo vi /etc/hostname
+```
+server1
+reboot
+```
+
 #!/bin/bash
 
 set -e  # 遇到错误时退出脚本
@@ -150,3 +163,60 @@ service php8.1-fpm restart
 
 echo "Installation complete. Please verify all components."
 ```
+# Adminer 安装和配置脚本
+```
+# 安装 Adminer
+echo "Checking and installing Adminer..."
+ADMINER_FILE="/var/www/apps/adminer.php"
+if [ ! -f "$ADMINER_FILE" ]; then
+    echo "Downloading Adminer..."
+    wget -q https://github.com/vrana/adminer/releases/download/v4.8.1/adminer-4.8.1-mysql-en.php -O "$ADMINER_FILE"
+    echo "Adminer installed at $ADMINER_FILE."
+else
+    echo "Adminer is already installed."
+fi
+
+# 配置 Nginx 以支持 Adminer
+echo "Configuring Nginx for Adminer..."
+NGINX_CONF="/etc/nginx/sites-available/adminer"
+if [ ! -f "$NGINX_CONF" ]; then
+    mkdir -p /var/www/apps
+    cat <<EOF > "$NGINX_CONF"
+server {
+    listen 8081;
+    server_name _;
+
+    root /var/www/apps;
+
+    location /adminer {
+        index adminer.php;
+        try_files \$uri \$uri/ /adminer.php?\$query_string;
+    }
+
+    location ~ \.php\$ {
+        include fastcgi_params;
+        fastcgi_param SCRIPT_FILENAME \$document_root\$fastcgi_script_name;
+        fastcgi_pass unix:/var/run/php/php8.1-fpm.sock;
+    }
+}
+EOF
+
+    echo "Creating symbolic link to enable Nginx site configuration..."
+    ln -sf "$NGINX_CONF" /etc/nginx/sites-enabled/adminer
+
+    echo "Testing Nginx configuration..."
+    if nginx -t; then
+        echo "Reloading Nginx..."
+        service nginx reload
+        echo "Adminer Nginx configuration applied."
+    else
+        echo "Nginx configuration test failed. Please check the configuration file: $NGINX_CONF."
+        exit 1
+    fi
+else
+    echo "Nginx configuration for Adminer is already in place."
+fi
+
+echo "Adminer installation and Nginx configuration completed. Access Adminer at http://<your-ip>:8081/adminer."
+```
+记得把   server_name _;改成    server_name yourdomain;
