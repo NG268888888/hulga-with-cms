@@ -163,7 +163,9 @@ service php8.1-fpm restart
 
 echo "Installation complete. Please verify all components."
 ```
+
 # Adminer 安装和配置脚本
+
 ```
 # 安装 Adminer
 echo "Checking and installing Adminer..."
@@ -219,4 +221,5 @@ fi
 
 echo "Adminer installation and Nginx configuration completed. Access Adminer at http://<your-ip>:8081/adminer."
 ```
+
 记得把   server_name _;改成    server_name yourdomain;
