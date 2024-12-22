@@ -3,7 +3,7 @@ title: ispconfig一键安装脚本
 date: 2024-12-21T14:54:00+08:00
 ---
 # 配置环境
-
+```
 sudo vi /etc/hosts
 
 ```
