@@ -480,10 +480,11 @@ php artisan admin:install
 
 在git项目里使用了git revert命令，结果git log无法显示全部版本历史了。试了好多办法也行。索性删除了项目，又从github上重新下载了项目，但是在本地git log还是不显示全部log，使用命令git reset --hard 1cb21dea3f到某个指定版本（不要revert的那个版本），然后git checkout 9b5625ab5到某个版本就好了。如果访问网站显示错误，记得配置一下laravel项目，比如composer intall 和composer update
 
-## laravel 10安装多语言包
+## laravel 8安装多语言包
 
 ```
 composer require overtrue/laravel-lang
-php artisan lang:publish zh-CN
+php artisan lang:publish zh-CN #没有en
 php artisan lang:publish ja
 ```
+使用 trans('demo.user_not_exists');或  __('demo.user_not_exists');
