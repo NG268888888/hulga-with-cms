@@ -9,7 +9,7 @@ ispconfig 3 安装的pure-ftpd-mysql，这表明你的 PureFTPd 配置使用了 
 **配置被动模式**：
 PureFTPd 默认启用了被动模式。你需要指定被动端口范围：
 
-编辑 `/etc/pure-ftpd/conf/PassivePortRange`：
+编辑/etc/pure-ftpd/conf/PassivePortRange
 
 确保端口 21 (FTP 控制连接) 和 TLS 数据传输端口范围（如 20000-30000）已开放。最好在后台firewall手动添加。
 
