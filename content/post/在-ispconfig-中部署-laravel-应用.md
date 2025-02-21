@@ -34,35 +34,25 @@ chmod 775 /var/www/clients/client0/web4/web
 ```
 tail -f /var/www/clients/client0/web4/log/error.log
 ```
-查出问题出在laravel目录访问权限上，接着设置laravel项目配置
-
-#### 安装 Composer
 
 ```
+ssh-keygen -t ed25519 #生成pub key粘贴到github项目库settings的ssh key
+cd /var/www/clients/client0/webX/web
+git clone git项目
+chown -R webX:client0 your-laravel-project
+chmod 775 your-laravel-project
+chmod -R 775 your-laravel-project/storage
+chmod -R 775 your-laravel-project/bootstrap/cache
+
+sudo adduser deployer --disabled-password
+sudo usermod -aG client0 deployer
+
+chmod 664 your-laravel-project/composer.lock
+su - deployer
 apt install composer
-```
+cd /var/www/clients/client0/webX/web/your-laravel-project
 
-#### 下载或上传 Laravel 项目
-
-此步骤已做
-
-#### 设置目录权限
-
-Laravel 需要对 storage 和 bootstrap/cache 目录有写权限：
-
-```
-sudo chown -R www-data:www-data /var/www/your-laravel-project
-sudo chmod -R 775 /var/www/your-laravel-project/storage
-sudo chmod -R 775 /var/www/your-laravel-project/bootstrap/cache
-```
-
-#### 安装依赖
-
-```
-cd /var/www/your-laravel-project
-composer install #提示Continue as root/super user [yes]? no
-su - jenkins
-cd /var/www/clients/client0/web4/web/laravel
+composer update
 composer install
 ```
 
@@ -92,20 +82,10 @@ DB_PASSWORD=xxx
 
 ```
 php artisan key:generate
-```
-
-#### 配置 Nginx
-
-#### 配置数据库
-
-进入 MySQL：
-```
-CREATE DATABASE `laravel-xxx`;
+php artisan storage:link
 ```
 
 #### 运行迁移和种子数据（可选）
-
-如果你有数据库迁移或种子数据需要运行，可以执行：
 
 ```
 php artisan migrate
