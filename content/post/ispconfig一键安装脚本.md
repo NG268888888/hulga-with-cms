@@ -15,7 +15,6 @@ sudo vi /etc/hostname
 server1
 reboot
 ```
-
 #!/bin/bash
 
 set -e  # 遇到错误时退出脚本
@@ -51,26 +50,24 @@ else
     echo "Nginx is already installed."
 fi
 
-# 安装 PHP 8.2
-echo "Checking and installing PHP 8.2..."
-if ! php -v | grep -q "PHP 8.2"; then
+# 安装 PHP 8.3
+echo "Checking and installing PHP 8.3..."
+if ! php -v | grep -q "PHP 8.3"; then
     sudo add-apt-repository -y ppa:ondrej/php
     sudo apt-get update
-    apt-get install -y php8.2 php8.2-cli php8.2-cgi php8.2-fpm php8.2-gd php8.2-mysql \
-    php8.2-imap php8.2-curl php8.2-intl php8.2-pspell php8.2-sqlite3 php8.2-tidy \
-    php8.2-xsl php8.2-zip php8.2-mbstring php8.2-soap php8.2-opcache libonig5 \
-    php8.2-common php8.2-readline php8.2-xml
+    apt-get install php8.3 php8.3-cli php8.3-cgi php8.3-fpm php8.3-gd php8.3-mysql php8.3-imap php8.3-curl php8.3-intl php8.3-pspell php8.3-sqlite3 php8.3-tidy php8.3-xsl php8.3-zip php8.3-mbstring php8.3-soap php8.3-opcache php8.3-common php8.3-readline php8.3-xml
+
 else
-    echo "PHP 8.2 is already installed."
+    echo "PHP 8.3 is already installed."
 fi
 
 # 配置 PHP
 echo "Configuring PHP..."
-PHP_INI="/etc/php/8.2/fpm/php.ini"
+PHP_INI="/etc/php/8.3/fpm/php.ini"
 if ! grep -q "cgi.fix_pathinfo=0" "$PHP_INI"; then
     sed -i 's/^cgi.fix_pathinfo=.*/cgi.fix_pathinfo=0/' "$PHP_INI"
     sed -i 's/^;date.timezone =.*/date.timezone = "Europe\/Berlin"/' "$PHP_INI"
-    service php8.2-fpm reload
+    service php8.3-fpm reload
 else
     echo "PHP is already configured."
 fi
@@ -179,9 +176,10 @@ fi
 # 重启所有服务
 echo "Restarting Nginx and PHP-FPM..."
 service nginx restart
-service php8.2-fpm restart
+service php8.3-fpm restart
 
 echo "Installation complete. Please verify all components."
+
 ```
 
 # Adminer 安装和配置脚本
