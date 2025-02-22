@@ -179,7 +179,7 @@ fi
 # 重启所有服务
 echo "Restarting Nginx and PHP-FPM..."
 service nginx restart
-service php8.1-fpm restart
+service php8.2-fpm restart
 
 echo "Installation complete. Please verify all components."
 ```
@@ -218,7 +218,7 @@ server {
     location ~ \.php\$ {
         include fastcgi_params;
         fastcgi_param SCRIPT_FILENAME \$document_root\$fastcgi_script_name;
-        fastcgi_pass unix:/var/run/php/php8.1-fpm.sock;
+        fastcgi_pass unix:/var/run/php/php8.2-fpm.sock;
     }
 }
 EOF
