@@ -34,26 +34,12 @@ chmod 775 /var/www/clients/client0/web4/web
 ```
 tail -f /var/www/clients/client0/web4/log/error.log
 ```
-
+使用一键部署脚步，这里只作不完全记录
 ```
-ssh-keygen -t ed25519 #生成pub key粘贴到github项目库settings的ssh key
-cd /var/www/clients/client0/webX/web
-git clone git项目
-chown -R webX:client0 your-laravel-project
-chmod 775 your-laravel-project
-chmod -R 775 your-laravel-project/storage
-chmod -R 775 your-laravel-project/bootstrap/cache
-
-sudo adduser deployer --disabled-password
-sudo usermod -aG client0 deployer
-
-chmod 664 your-laravel-project/composer.lock
-su - deployer
-apt install composer
-cd /var/www/clients/client0/webX/web/your-laravel-project
-
-composer update
-composer install
+...
+find /var/www/clients/client0/web3/web -type d -exec chmod 755 {} \;
+find /var/www/clients/client0/web3/web -type f -exec chmod 644 {} \;
+...
 ```
 
 #### 设置环境配置
