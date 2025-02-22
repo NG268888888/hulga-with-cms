@@ -51,26 +51,26 @@ else
     echo "Nginx is already installed."
 fi
 
-# 安装 PHP 8.1
-echo "Checking and installing PHP 8.1..."
-if ! php -v | grep -q "PHP 8.1"; then
+# 安装 PHP 8.2
+echo "Checking and installing PHP 8.2..."
+if ! php -v | grep -q "PHP 8.2"; then
     sudo add-apt-repository -y ppa:ondrej/php
     sudo apt-get update
-    apt-get install -y php8.1 php8.1-cli php8.1-cgi php8.1-fpm php8.1-gd php8.1-mysql \
-        php8.1-imap php8.1-curl php8.1-intl php8.1-pspell php8.1-sqlite3 php8.1-tidy \
-        php8.1-xsl php8.1-zip php8.1-mbstring php8.1-soap php8.1-opcache libonig5 \
-        php8.1-common php8.1-readline php8.1-xml
+apt-get install -y php8.2 php8.2-cli php8.2-cgi php8.2-fpm php8.2-gd php8.2-mysql \
+    php8.2-imap php8.2-curl php8.2-intl php8.2-pspell php8.2-sqlite3 php8.2-tidy \
+    php8.2-xsl php8.2-zip php8.2-mbstring php8.2-soap php8.2-opcache libonig5 \
+    php8.2-common php8.2-readline php8.2-xml
 else
-    echo "PHP 8.1 is already installed."
+    echo "PHP 8.2 is already installed."
 fi
 
 # 配置 PHP
 echo "Configuring PHP..."
-PHP_INI="/etc/php/8.1/fpm/php.ini"
+PHP_INI="/etc/php/8.2/fpm/php.ini"
 if ! grep -q "cgi.fix_pathinfo=0" "$PHP_INI"; then
     sed -i 's/^cgi.fix_pathinfo=.*/cgi.fix_pathinfo=0/' "$PHP_INI"
     sed -i 's/^;date.timezone =.*/date.timezone = "Europe\/Berlin"/' "$PHP_INI"
-    service php8.1-fpm reload
+    service php8.2-fpm reload
 else
     echo "PHP is already configured."
 fi
