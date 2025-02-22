@@ -15,7 +15,7 @@ sudo vi /etc/hostname
 server1
 reboot
 
-sh运行在ubuntu 24上，默认使用php8.3-fpm
+请在ubuntu 24（默认php8.3-fpm）上运行sh，脚本安装php8.3
 
 ```
 #!/bin/bash
