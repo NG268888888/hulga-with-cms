@@ -1,5 +1,5 @@
 ---
-title: " 在 ISPConfig 中部署 Laravel 应用的一件脚本"
+title: " 在 ISPConfig 中部署 Laravel 应用的一键脚本"
 date: 2025-02-22T22:54:00+08:00
 ---
 确认安装了composer
