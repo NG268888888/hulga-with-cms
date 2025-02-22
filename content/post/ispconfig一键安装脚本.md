@@ -56,7 +56,7 @@ echo "Checking and installing PHP 8.2..."
 if ! php -v | grep -q "PHP 8.2"; then
     sudo add-apt-repository -y ppa:ondrej/php
     sudo apt-get update
-apt-get install -y php8.2 php8.2-cli php8.2-cgi php8.2-fpm php8.2-gd php8.2-mysql \
+    apt-get install -y php8.2 php8.2-cli php8.2-cgi php8.2-fpm php8.2-gd php8.2-mysql \
     php8.2-imap php8.2-curl php8.2-intl php8.2-pspell php8.2-sqlite3 php8.2-tidy \
     php8.2-xsl php8.2-zip php8.2-mbstring php8.2-soap php8.2-opcache libonig5 \
     php8.2-common php8.2-readline php8.2-xml
