@@ -14,6 +14,9 @@ sudo vi /etc/hostname
 ```
 server1
 reboot
+
+sh运行在ubuntu 24上，默认使用php8.3-fpm
+
 ```
 #!/bin/bash
 
@@ -216,7 +219,7 @@ server {
     location ~ \.php\$ {
         include fastcgi_params;
         fastcgi_param SCRIPT_FILENAME \$document_root\$fastcgi_script_name;
-        fastcgi_pass unix:/var/run/php/php8.2-fpm.sock;
+        fastcgi_pass unix:/var/run/php/php8.3-fpm.sock;
     }
 }
 EOF
