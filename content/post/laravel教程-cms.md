@@ -175,6 +175,331 @@ rm -f app/Http/Controllers/HomeController.php resources/views/home.blade.php
 
 访问登录页面，看看效果
 
+## 魔改注册
+
+### 首先，让我创建一个邮件类：
+
+```
+php artisan make:mail UserRegistered
+```
+
+```
+<?php
+
+namespace App\Mail;
+
+use App\Models\User;
+use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Mail\Mailable;
+use Illuminate\Queue\SerializesModels;
+
+class UserRegistered extends Mailable
+{
+    use Queueable;
+    use SerializesModels;
+
+    public $user;
+    public $password;
+
+    /**
+     * Create a new message instance.
+     *
+     * @return void
+     */
+    public function __construct(User $user, string $password)
+    {
+        $this->user = $user;
+        $this->password = $password;
+    }
+
+    /**
+     * Build the message.
+     *
+     * @return $this
+     */
+    public function build()
+    {
+        return $this->subject('欢迎注册 ' . config('app.name'))
+                    ->view('emails.user-registered');
+    }
+}
+```
+
+### 接下来创建邮件模板：
+
+```
+mkdir -p resources/views/emails
+```
+
+### 现在让我们创建并编辑邮件模板：
+
+resources/views/emails/user-registered.blade.php
+
+```
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>注册成功</title>
+</head>
+
+<body>
+    <h1>{{ config('app.name') }} - 注册成功</h1>
+    <p>您好，</p>
+    <p>您已成功注册 {{ config('app.name') }}。以下是您的登录信息：</p>
+    <p><strong>用户名：</strong> {{ $user->name }}</p>
+    <p><strong>密码：</strong> {{ $password }}</p>
+    <p>请使用上述信息登录系统。首次登录后，建议修改您的密码。</p>
+    <p>谢谢！</p>
+    <p>{{ config('app.name') }} 团队</p>
+</body>
+
+</html>
+```
+
+### 现在修改邮件类：
+
+```
+app/Mail/UserRegistered.php
+```
+
+```
+<?php
+
+namespace App\Mail;
+
+use App\Models\User;
+use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Mail\Mailable;
+use Illuminate\Queue\SerializesModels;
+
+class UserRegistered extends Mailable
+{
+    use Queueable;
+    use SerializesModels;
+
+    public $user;
+    public $password;
+
+    /**
+     * Create a new message instance.
+     *
+     * @return void
+     */
+    public function __construct(User $user, string $password)
+    {
+        $this->user = $user;
+        $this->password = $password;
+    }
+
+    /**
+     * Build the message.
+     *
+     * @return $this
+     */
+    public function build()
+    {
+        return $this->subject('欢迎注册 ' . config('app.name'))
+                    ->view('emails.user-registered');
+    }
+}
+```
+
+现在修改注册控制器：
+
+```
+app/Http/Controllers/Auth/RegisterController.php
+
+```
+
+```
+<?php
+
+namespace App\Http\Controllers\Auth;
+
+use App\Http\Controllers\Controller;
+use App\Providers\RouteServiceProvider;
+use App\Models\User;
+use App\Mail\UserRegistered;
+use Illuminate\Foundation\Auth\RegistersUsers;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Str;
+use Illuminate\Http\Request;
+use Illuminate\Auth\Events\Registered;
+
+class RegisterController extends Controller
+{
+    /*
+    |--------------------------------------------------------------------------
+    | Register Controller
+    |--------------------------------------------------------------------------
+    |
+    | This controller handles the registration of new users as well as their
+    | validation and creation. By default this controller uses a trait to
+    | provide this functionality without requiring any additional code.
+    |
+    */
+
+    use RegistersUsers;
+
+    /**
+     * Where to redirect users after registration.
+     *
+     * @var string
+     */
+    protected $redirectTo = RouteServiceProvider::HOME;
+
+    /**
+     * Create a new controller instance.
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+        $this->middleware('guest');
+    }
+
+    /**
+     * Get a validator for an incoming registration request.
+     *
+     * @param  array  $data
+     * @return \Illuminate\Contracts\Validation\Validator
+     */
+    protected function validator(array $data)
+    {
+        return Validator::make($data, [
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
+        ]);
+    }
+
+    /**
+     * Create a new user instance after a valid registration.
+     *
+     * @param  array  $data
+     * @return \App\Models\User
+     */
+    protected function create(array $data)
+    {
+        // 生成随机用户名（基于邮箱）
+        $name = explode('@', $data['email'])[0] . '_' . Str::random(5);
+
+        // 生成随机密码
+        $password = Str::random(10);
+
+        $user = User::create([
+            'name' => $name,
+            'email' => $data['email'],
+            'password' => Hash::make($password),
+        ]);
+
+        // 发送包含用户名和密码的邮件
+        Mail::to($user->email)->send(new UserRegistered($user, $password));
+
+        return $user;
+    }
+
+    /**
+     * 重写注册方法
+     */
+    public function register(Request $request)
+    {
+        $this->validator($request->all())->validate();
+
+        event(new Registered($user = $this->create($request->all())));
+
+        return redirect()->route('login')
+            ->with('status', '注册成功！请查收您的邮箱获取登录信息。');
+    }
+}
+```
+
+最后，修改注册视图：
+
+resources/views/auth/register.blade.php
+
+```
+@extends('layouts.app')
+
+@section('content')
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">{{ __('Register') }}</div>
+
+                <div class="card-body">
+                    <form method="POST" action="{{ route('register') }}">
+                        @csrf
+
+                        <div class="row mb-3">
+                            <label for="email" class="col-md-4 col-form-label text-md-end">{{ __('Email Address') }}</label>
+
+                            <div class="col-md-6">
+                                <input id="email" type="email" class="form-control @error('email') is-invalid @enderror" name="email" value="{{ old('email') }}" required autocomplete="email">
+
+                                @error('email')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                @enderror
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6 offset-md-4">
+                                <p class="text-muted">
+                                    注册后，我们将发送一封包含您的登录信息的邮件到您的邮箱。
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="row mb-0">
+                            <div class="col-md-6 offset-md-4">
+                                <button type="submit" class="btn btn-primary">
+                                    {{ __('Register') }}
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@endsection
+```
+
+最后，让我们修改登录页面以显示注册成功的消息：
+
+resources/views/auth/login.blade.php，添加代码
+
+```
+@if (session('status'))
+    <div class="alert alert-success mb-3">
+        {{ session('status') }}
+    </div>
+@endif
+```
+
+现在我们需要确保邮件配置正确。在本地开发环境中，你可以使用Mailhog来测试邮件发送。
+
+.env
+
+```
+MAIL_MAILER=smtp
+MAIL_HOST=127.0.0.1
+MAIL_PORT=1025
+MAIL_USERNAME=null
+MAIL_PASSWORD=null
+MAIL_ENCRYPTION=null
+MAIL_FROM_ADDRESS=noreply@example.com
+MAIL_FROM_NAME="${APP_NAME}"
+```
+
 ### 顶部导航
 
 接下来我们需要把顶部导航的登录和注册按钮指向真实的地址：
@@ -384,19 +709,23 @@ git commit -m "邮箱验证中间件"
 ```
 
 ## laravel-admin后台
+
 提示Your requirements could not be resolved to an installable set of packages.修改comoposer.json
+
 ```
     "require": {
         "encore/laravel-admin": "^1.8"
         ...
     }
 ```
+
 ```
 composer update
 composer require encore/laravel-admin
 php artisan vendor:publish --provider="Encore\Admin\AdminServiceProvider"
 php artisan admin:install
 ```
+
 修改后台为中文语言，app.php文件locale = 'zh_CN'，然后修改resources\lang\zh-CN为zh_CN
 
 ## 在 Laravel 项目中实现多语言支持
@@ -404,75 +733,71 @@ php artisan admin:install
 在 Laravel 项目中实现多语言支持，可以通过以下步骤来完成：
 
 1. **创建语言文件**：在 `resources/lang` 目录下，为每种语言创建一个子目录，例如 `en` 和 `zh`，并在这些目录中创建 `messages.php` 文件来存储翻译字符串。例如：
-  
-  ```php
-  // resources/lang/en/messages.php
-  return [
-      'welcome' => 'Welcome to our application!',
-  ];
-  
-  // resources/lang/zh/messages.php
-  return [
-      'welcome' => '欢迎使用我们的应用程序！',
-  ];
-  ```
-  
+
+```php
+// resources/lang/en/messages.php
+return [
+    'welcome' => 'Welcome to our application!',
+];
+
+// resources/lang/zh/messages.php
+return [
+    'welcome' => '欢迎使用我们的应用程序！',
+];
+```
+
   对于根据领土差异的语言，应根据 ISO 15897 来命名语言目录，例如使用 "en_GB" 用于英式英语而不是 "en-gb" 。
-  
+
 2. **配置应用程序**：在 `config/app.php` 文件中，设置 `locale` 为默认语言，`fallback_locale` 为备用语言（如果没有找到默认语言的翻译）。
-  
-  ```php
-  return [
-      'locale' => 'en',
-      'fallback_locale' => 'en',
-  ];
-  ```
-  
+
+```php
+return [
+    'locale' => 'en',
+    'fallback_locale' => 'en',
+];
+```
+
 3. **动态设置语言**：可以使用 `App::setLocale($lang)` 方法动态设置当前语言，通常在中间件或控制器的构造函数中根据用户的选择来设置语言。
-  
-  ```php
-  use Illuminate\Support\Facades\App;
-  App::setLocale($user->preferred_language);
-  ```
-  
+
+```php
+use Illuminate\Support\Facades\App;
+App::setLocale($user->preferred_language);
+```
+
 4. **使用翻译字符串**：在路由和控制器中，使用 `__()` 函数来输出翻译后的字符串。
-  
-  ```php
-  echo __('messages.welcome');
-  ```
-  
+
+```php
+echo __('messages.welcome');
+```
+
 5. **视图**：在视图中，使用 `{{ __('messages.welcome') }}` 语法来显示翻译文本。
-  
 6. **语言切换器**：在视图中，创建一个语言切换器，允许用户选择语言。这通常是一个下拉菜单或链接列表，当用户选择一种语言时，它会发送一个请求到服务器以更新用户的语言偏好。
-  
 7. **存储用户偏好**：你可以选择将用户的语言偏好存储在数据库、会话或 Cookie 中，以便在用户的后续访问中记住其选择。
-  
 
 此外，Laravel 还支持使用 JSON 文件来定义翻译字符串，这适用于具有大量翻译字符串的应用程序 。你可以通过 Composer 引入 `spatie/laravel-lang` 包来获取更多的语言支持 。这个包包含了 Laravel 核心及许多流行扩展包的所有本地化文件，支持超过 100 种语言，并且易于集成和使用。
 
 ## 在Git中，如果你想要将代码回滚到指定的版本
 
 1. **使用`git checkout`**:
-  如果你只是想查看某个特定版本的代码，而不打算修改当前分支，可以使用`git checkout`命令。例如，如果你知道想要回滚到的版本号是`abc123`，你可以执行：
-  
+   如果你只是想查看某个特定版本的代码，而不打算修改当前分支，可以使用`git checkout`命令。例如，如果你知道想要回滚到的版本号是`abc123`，你可以执行：
+
   bash
-  
-  ```bash
-  git checkout abc123
-  ```
-  
+
+```bash
+git checkout abc123
+```
+
   这会创建一个新分支并切换到该分支，其中包含指定版本的代码。
-  
+
 2. **使用`git reset`**:
-  如果你想要将当前分支的HEAD指针移动到指定的版本，并更新工作目录和索引，可以使用`git reset`。这会将代码回滚到指定版本，但不会创建新分支
-  
+   如果你想要将当前分支的HEAD指针移动到指定的版本，并更新工作目录和索引，可以使用`git reset`。这会将代码回滚到指定版本，但不会创建新分支
 
 **硬回滚（hard）**: 移动HEAD指针，更新索引和工作目录，丢弃所有未提交的更改。
 
-- ```bash
+ ```bash
   git reset --hard abc123
+  git clean -df
   ```
-  
 
 请注意，使用`--hard`选项会丢失所有未提交的更改，因此在使用之前请确保这是你想要的操作。
 
@@ -487,4 +812,5 @@ composer require overtrue/laravel-lang
 php artisan lang:publish zh-CN #没有en
 php artisan lang:publish ja
 ```
+
 使用 trans('demo.user_not_exists');或  __('demo.user_not_exists');
