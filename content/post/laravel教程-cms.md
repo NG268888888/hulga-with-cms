@@ -814,3 +814,248 @@ php artisan lang:publish ja
 ```
 
 使用 trans('demo.user_not_exists');或  __('demo.user_not_exists');
+
+## SiteMap
+```
+composer require spatie/laravel-sitemap
+php artisan make:command GenerateSitemap
+```
+
+app/Console/Commands/GenerateSitemap.php
+
+```
+<?php
+
+namespace App\Console\Commands;
+
+use App\Models\Post;
+use App\Models\Tool;
+use App\Models\CustomPages;
+use Illuminate\Console\Command;
+use Spatie\Sitemap\Sitemap;
+use Spatie\Sitemap\Tags\Url;
+
+class GenerateSitemap extends Command
+{
+    protected $signature = 'sitemap:generate';
+    protected $description = '生成网站地图';
+
+    public function handle()
+    {
+        $this->info('开始生成网站地图...');
+        $sitemap = Sitemap::create();
+
+        // 添加首页
+        $sitemap->add(
+            Url::create('/')
+                ->setChangeFrequency(Url::CHANGE_FREQUENCY_DAILY)
+                ->setPriority(1.0)
+        );
+
+        // 从数据库中获取文章并添加到 Sitemap 中
+        Post::all()->each(function (Post $post) use ($sitemap) {
+            $sitemap->add(
+                Url::create("/{$post->slug}")
+                    ->setLastModificationDate($post->updated_at)
+                    ->setChangeFrequency(Url::CHANGE_FREQUENCY_WEEKLY)
+                    ->setPriority(0.8)
+            );
+        });
+
+        // 添加工具页面
+        Tool::all()->each(function (Tool $tool) use ($sitemap) {
+            $sitemap->add(
+                Url::create("/tools/{$tool->slug}")
+                    ->setLastModificationDate($tool->updated_at)
+                    ->setChangeFrequency(Url::CHANGE_FREQUENCY_WEEKLY)
+                    ->setPriority(0.7)
+            );
+        });
+
+        // 添加静态页面
+        CustomPages::all()->each(function (CustomPages $page) use ($sitemap) {
+            $sitemap->add(
+                Url::create("/{$page->slug}")
+                    ->setLastModificationDate($page->updated_at)
+                    ->setChangeFrequency(Url::CHANGE_FREQUENCY_MONTHLY)
+                    ->setPriority(0.6)
+            );
+        });
+
+        $sitemap->writeToFile(public_path('sitemap.xml'));
+        $this->info('网站地图生成成功！');
+    }
+}
+```
+app/Console/Kernel.php 
+
+```
+    protected $commands = [
+        \App\Console\Commands\GenerateSitemap::class,
+    ];
+```
+### 管理界面：
+控制器：app/Admin/Controllers/SitemapController.php
+
+```
+<?php
+
+namespace App\Admin\Controllers;
+
+use App\Http\Controllers\Controller;
+use Encore\Admin\Layout\Content;
+use Encore\Admin\Widgets\Box;
+use Encore\Admin\Widgets\Form;
+use Encore\Admin\Widgets\Alert;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Artisan;
+
+class SitemapController extends Controller
+{
+    /**
+     * 网站地图管理页面
+     *
+     * @param Content $content
+     * @return Content
+     */
+    public function index(Content $content)
+    {
+        return $content
+            ->title(__('admin.sitemap.title'))
+            ->description(__('admin.sitemap.description'))
+            ->body($this->form())
+            ->body($this->sitemapInfo());
+    }
+
+    /**
+     * 创建表单
+     *
+     * @return Box
+     */
+    protected function form()
+    {
+        $form = new Form();
+        $form->action(admin_url('sitemap/generate'));
+
+        $form->display('说明', __('admin.sitemap.instruction'));
+        $form->hidden('_token')->default(csrf_token());
+        $form->submit(__('admin.sitemap.generate'));
+
+        return (new Box(__('admin.sitemap.generate'), $form))->style('info');
+    }
+
+    /**
+     * 显示网站地图信息
+     *
+     * @return Box
+     */
+    protected function sitemapInfo()
+    {
+        $sitemapPath = public_path('sitemap.xml');
+        $content = '';
+
+        if (file_exists($sitemapPath)) {
+            $lastModified = date('Y-m-d H:i:s', filemtime($sitemapPath));
+            $fileSize = round(filesize($sitemapPath) / 1024, 2);
+            $sitemapUrl = url('sitemap.xml');
+
+            $content = <<<HTML
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <tbody>
+                        <tr>
+                            <th>{$this->trans('admin.sitemap.url')}</th>
+                            <td><a href="{$sitemapUrl}" target="_blank">{$sitemapUrl}</a></td>
+                        </tr>
+                        <tr>
+                            <th>{$this->trans('admin.sitemap.last_modified')}</th>
+                            <td>{$lastModified}</td>
+                        </tr>
+                        <tr>
+                            <th>{$this->trans('admin.sitemap.file_size')}</th>
+                            <td>{$fileSize} KB</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+HTML;
+        } else {
+            $content = (new Alert(__('admin.sitemap.not_generated')))->style('warning');
+        }
+
+        return (new Box(__('admin.sitemap.info'), $content))->style('default');
+    }
+
+    /**
+     * 生成网站地图
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function generate(Request $request)
+    {
+        try {
+            Artisan::call('sitemap:generate');
+            admin_toastr(__('admin.sitemap.generate_success'), 'success');
+        } catch (\Exception $e) {
+            admin_toastr(__('admin.sitemap.generate_failed') . $e->getMessage(), 'error');
+        }
+
+        return redirect()->back();
+    }
+
+    /**
+     * 翻译辅助函数
+     * 
+     * @param string $key
+     * @return string
+     */
+    protected function trans($key)
+    {
+        return __($key);
+    }
+}
+```
+文件存储：
+网站地图文件保存在 public/sitemap.xml
+
+已添加到 .gitignore 防止被提交到版本控制系统
+
+定时任务：
+ - 在 app/Console/Kernel.php 中注册了命令并设置每日凌晨 1 点自动执行
+ - 输出日志保存到 storage/logs/sitemap.log
+```
+    protected function schedule(Schedule $schedule)
+    {
+        // $schedule->command('inspire')->hourly();
+        $schedule->command('sitemap:generate')
+                 ->daily()
+                 ->at('01:00')
+                 ->appendOutputTo(storage_path('logs/sitemap.log'));
+    }
+```
+
+app\Admin\routes.php
+
+```
+    // 网站地图管理
+    $router->get('sitemap', 'SitemapController@index')->name('sitemap.index');
+    $router->post('sitemap/generate', 'SitemapController@generate')->name('sitemap.generate');
+```
+
+前端访问路由：
+ - 在 routes/web.php 中定义了访问路由：/sitemap.xml
+ - 如果文件不存在会自动调用命令生成
+
+routes/web.php
+
+```
+// 网站地图路由
+Route::get('/sitemap.xml', function() {
+    // 如果文件不存在，则生成
+    if (!file_exists(public_path('sitemap.xml'))) {
+        \Artisan::call('sitemap:generate');
+    }
+    return response()->file(public_path('sitemap.xml'));
+});
+```
