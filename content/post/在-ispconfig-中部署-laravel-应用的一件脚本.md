@@ -2,6 +2,15 @@
 title: " 在 ISPConfig 中部署 Laravel 应用的一键脚本"
 date: 2025-02-22T22:54:00+08:00
 ---
+# Ispconfig nginx Directives:
+```
+location / {
+    root {DOCROOT}project/public;
+    try_files $uri project/public/$uri/ /project/public/index.php?$query_string;
+}
+```
+把project替换成你的项目名
+
 确认安装了composer
 ```
 #!/bin/bash
