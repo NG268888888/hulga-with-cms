@@ -141,7 +141,7 @@ docker run --detach \
 Drone CI For Github —— 打造自己的CI/CD工作流（一）
 
 **生成SSH密钥对**：
-在部署Drone Server的VPS上生成一个SSH密钥对（如果还没有）：
+在部署Drone Server的VPS上（如服务器A）生成一个SSH密钥对（如果还没有）：
 
 ```
 ssh-keygen -t rsa -b 4096 -C "drone-deploy-key" -f ~/.ssh/drone_deploy_key
@@ -150,15 +150,12 @@ ssh-keygen -t rsa -b 4096 -C "drone-deploy-key" -f ~/.ssh/drone_deploy_key
 **将公钥添加到服务器B**：
 将生成的公钥添加到服务器B的`~/.ssh/authorized_keys`中。
 
-**将私钥配置到Drone**：
-将生成的私钥文件（`drone_deploy_key`）内容添加到Drone Web中，并将其作为一个安全变量配置到工作流中。
-
 #### 2. 配置Drone Web仓库 Secrets
 
 在 Drone Web仓库设置中添加：
 
-- `host` - 目标服务器 IP （服务器B）
-- `user` - SSH 用户名（如服务器A root）
+- `deploy_host` - 目标服务器 IP （服务器B）
+- `deploy_user` - SSH 用户名（如服务器A root）
 - `ssh_key` - SSH 私钥（如上一步在服务器A生成的私钥文`drone_deploy_key`）
 - `web_root` - 网站目录（如 /var/www/clients/client1/web1/web）
 
