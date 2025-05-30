@@ -109,3 +109,113 @@ chmod -R 775 storage bootstrap/cache
 
 echo "✅ 部署完成！"
 ```
+# 可能遇到的问题
+WEB_ROOT="/var/www/clients/$GROUP/$WEB/web"与WEB_ROOT="/var/www/clients/${GROUP}/${WEB}/web"是等价的。虽然两种写法都可以，但在以下情况建议用花括号，
+示例：
+```
+FILE="$PROJECT_NAME_backup"      # 错误，变量名会被解析成 PROJECT_NAME_backup
+FILE="${PROJECT_NAME}_backup"    # 正确，明确变量范围
+
+sudo -u deployer ssh-keygen -t ed25519 -N "" -f /home/deployer/.ssh/id_ed25519
+```
+
+-N ""	是让私钥没有密码保护（适用于自动化）
+
+-C 这个是 注释（comment），会加在生成的公钥文件中，用于标识这对密钥的用途或来源。
+
+-f <path>	指定密钥保存路径。如果你写的是相对路径，它会在当前工作目录下生成。
+
+默认使用“id_ed25519”生成密钥对，使用github不会报错，
+如果你之前用如下命令生成：
+```
+sudo -u deployer ssh-keygen -t ed25519 -f /home/deployer/.ssh/drone-ci-20250530
+```
+通过ssh克隆github代码，会遇到“git@github.com: Permission denied (publickey).
+fatal: Could not read from remote repository.”
+
+你需要确保 Git 用这个私钥。推荐加一个 ~/.ssh/config 文件，内容如下：
+```
+sudo -u deployer bash -c 'cat > /home/deployer/.ssh/config <<EOF
+Host github.com
+    HostName github.com
+    User git
+    IdentityFile /home/deployer/.ssh/drone-ci-20250530
+    IdentitiesOnly yes
+EOF'
+
+sudo -u deployer chmod 600 /home/deployer/.ssh/config
+```
+这样 git 命令就会使用你指定的密钥。
+
+
+# 如何让 GitHub 在不同项目使用不同的 SSH 密钥？
+
+## ✅ 解决方案：使用 `~/.ssh/config` 按项目“域名别名”绑定不同的密钥
+
+GitHub 默认只有一个 `github.com`，但你可以人为给不同项目设置别名（Host alias），然后绑定不同的私钥。
+
+---
+
+### 🧠 举个例子：
+
+你有两个项目：
+
+| 项目  | SSH地址                               | 目标               |
+| --- | ----------------------------------- | ---------------- |
+| A项目 | `git@github.com:user/project-a.git` | 用 `id_project_a` |
+| B项目 | `git@github.com:user/project-b.git` | 用 `id_project_b` |
+
+### 步骤如下：
+
+---
+
+## 🔹 第一步：在 `.ssh/config` 里配置不同 Host alias
+
+```bash
+# ~/.ssh/config
+
+Host github-project-a
+    HostName github.com
+    User git
+    IdentityFile ~/.ssh/id_project_a
+    IdentitiesOnly yes
+
+Host github-project-b
+    HostName github.com
+    User git
+    IdentityFile ~/.ssh/id_project_b
+    IdentitiesOnly yes
+```
+
+---
+
+## 🔹 第二步：在 `.git` 或 clone 时使用对应 Host
+
+改写 clone 命令：
+
+```bash
+# 对于 A 项目
+git clone git@github-project-a:user/project-a.git
+
+# 对于 B 项目
+git clone git@github-project-b:user/project-b.git
+```
+
+Git 会自动根据 `Host` 匹配你 `.ssh/config` 中的配置，从而使用对应的密钥文件。
+
+---
+
+## ✅ 最终效果
+
+你可以：
+
+* 为每个项目生成一对密钥
+* `.ssh/config` 中配置多个 `Host`
+* clone 时使用别名（如 `github-project-a`）
+* 不冲突、不共用同一私钥
+* 项目安全、易于管理
+
+---
+
+
+
