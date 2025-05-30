@@ -12,22 +12,51 @@ if [[ $EUID -ne 0 ]]; then
    exit 1
 fi
 
-DEPLOY_USER="deployer"
-PROJECT_NAME="project-name"
-TARGET_PATH="/tmp/project-name"
-WEB_ROOT="/var/www/clients/client0/web1/web"
-APP_PATH="$WEB_ROOT/project-name"
-WEB="web1"
+DEPLOY_USER=""
+PROJECT_NAME=""
+TARGET_PATH="/tmp/${PROJECT_NAME}"
+WEB=""
+GROUP=""
+WEB_ROOT="/var/www/clients/${GROUP}/${WEB}/web"
+APP_PATH="${WEB_ROOT}/${PROJECT_NAME}"
+
+KEY_NAME="id_ed25519"
+KEY_PATH="/home/${DEPLOY_USER}/.ssh/${KEY_NAME}"
 
 # 创建部署用户
-adduser --disabled-password --gecos "" deployer
-usermod -aG client0 deployer
+if id "${DEPLOY_USER}" &>/dev/null; then
+    echo "用户 ${DEPLOY_USER} 已存在，跳过创建"
+else
+    adduser --disabled-password --gecos "" "${DEPLOY_USER}"
+fi
 
-# 生成SSH密钥（自动化接受默认路径）
-sudo -u deployer ssh-keygen -t ed25519 -N "" -f /home/deployer/.ssh/id_ed25519
-echo -e "\n请将以下公钥添加到GitHub："
-cat /home/deployer/.ssh/id_ed25519.pub
-read -p "按回车继续..." # 等待确认密钥已添加
+# 添加用户到 client0 组
+usermod -aG "${GROUP}" "${DEPLOY_USER}"
+
+# 检查是否已有密钥
+if [ -f "${KEY_PATH}" ] && [ -f "${KEY_PATH}.pub" ]; then
+    echo "检测到已有 SSH 密钥：${KEY_PATH}"
+    read -p "是否重新生成密钥对？这将覆盖当前文件 [y/N]: " REGEN
+
+    if [[ "$REGEN" =~ ^[Yy]$ ]]; then
+        echo "重新生成 SSH 密钥对..."
+        sudo -u deployer ssh-keygen -t ed25519 -N "" -f "$KEY_PATH"
+    else
+        echo "继续使用已有密钥。"
+    fi
+else
+    echo "未发现密钥，正在生成新 SSH 密钥..."
+    sudo -u deployer mkdir -p /home/deployer/.ssh
+    sudo -u deployer chmod 700 /home/deployer/.ssh
+    sudo -u deployer ssh-keygen -t ed25519 -N "" -f "$KEY_PATH"
+fi
+
+# 显示公钥内容
+echo -e "\n请将以下公钥添加到 GitHub 仓库的 Deploy Keys，并开启 'Allow read access'："
+echo "------------------------------------------------------------"
+cat "${KEY_PATH}.pub"
+echo "------------------------------------------------------------"
+read -p "添加完毕后，按回车继续..."
 
 # 获取仓库地址
 read -p "请输入Git仓库地址（SSH格式）: " REPO_URL
@@ -47,6 +76,7 @@ fi
 
 # 安装依赖
 cd "$TARGET_PATH" || exit 1
+sudo -u deployer composer update
 sudo -u deployer composer install --no-dev --prefer-dist --optimize-autoloader
 
 # 环境配置
@@ -73,7 +103,7 @@ mv "$TARGET_PATH" "$WEB_ROOT"
 
 # 设置权限
 echo "设置权限..."
-chown -R "$WEB":client0 "$WEB_ROOT"
+chown -R "$WEB":"$GROUP" "$WEB_ROOT"
 cd "$APP_PATH" || exit 1
 chmod -R 775 storage bootstrap/cache
 
