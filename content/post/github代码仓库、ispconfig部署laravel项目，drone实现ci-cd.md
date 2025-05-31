@@ -221,3 +221,6 @@ trigger:
   event:
     - push
 ```
+# 可能遇到的问题
+同一个ssh key被Github.com多个项目Deploy keys共用，会出现问题。
+
