@@ -147,16 +147,16 @@ Drone CI For Github —— 打造自己的CI/CD工作流（一）
 ssh-keygen -t rsa -b 4096 -C "drone-deploy-key" -f ~/.ssh/drone_deploy_key
 ```
 
-**将公钥添加到服务器B**：
-将生成的公钥添加到服务器B的`~/.ssh/authorized_keys`中。
+**将公钥添加到项目服务器B**：
+将生成的公钥添加到项目服务器B的`~/.ssh/authorized_keys`中。
 
 #### 2. 配置Drone Web仓库 Secrets
 
 在 Drone Web仓库设置中添加：
 
-- `deploy_host` - 目标服务器 IP （服务器B）
-- `deploy_user` - SSH 用户名（如服务器A root）
-- `ssh_key` - SSH 私钥（如上一步在服务器A生成的私钥文`drone_deploy_key`）
+- `deploy_host` - 目标服务器 IP （项目服务器B）
+- `deploy_user` - SSH 用户名（上一步在服务器A运行生成SSH密钥对命令的用户 如root）
+- `ssh_key` - SSH 私钥（上一步在服务器A生成的私钥`drone_deploy_key`）
 - `web_root` - 网站目录（如 /var/www/clients/client1/web1/web）
 
 ### 四、创建 `.drone.yml` 配置文件
