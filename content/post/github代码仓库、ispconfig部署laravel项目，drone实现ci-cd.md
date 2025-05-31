@@ -198,7 +198,7 @@ steps:
   commands:
     - git config --global --add safe.directory /var/www/clients/client0/web2/web/project-name
     - cd /var/www/clients/client0/web2/web/project-name
-    - git pull origin # Drone server、ssh runner部署在服务器B，把部署项目（服务器A）的root pub key添加到Github
+    - git pull origin # 因为上一步将生成的公钥添加到服务器B的~/.ssh/authorized_keys，~/是root用户目录，把服务器B的root目录 pub key添加到Github
 
 - name: fix-permissions
   commands:
