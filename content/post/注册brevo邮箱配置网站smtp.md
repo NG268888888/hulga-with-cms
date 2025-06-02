@@ -27,10 +27,19 @@ https://app.brevo.com/settings/keys/smtp
 ```
 MAIL_MAILER=smtp
 MAIL_HOST=SMTP Server
-MAIL_PORT=Port #587大部分服务器商都封，使用2525代替
+MAIL_PORT=Port #587大部分服务器商都封，使用2525或465代替
 MAIL_USERNAME=Login
 MAIL_PASSWORD=SMTP key value
-MAIL_ENCRYPTION=tls
+MAIL_ENCRYPTION=tls #如用465，改成ssl
 MAIL_FROM_ADDRESS=都可以
 MAIL_FROM_NAME="${APP_NAME}"
 ```
+
+使用https://www.zoho.com/zeptomail/smtp-test-tool.html测试
+
+# 扩展
+测试端口是否真能访问，在云主机商
+
+telnet smtp-relay.brevo.com 587
+sudo ufw status numbered
+
